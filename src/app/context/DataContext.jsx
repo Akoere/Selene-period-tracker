@@ -24,11 +24,10 @@ export function DataProvider({ children }) {
         return;
       }
 
-      // Parallel fetch for speed
-      const [profileRes, recentLogsRes, allLogsRes] = await Promise.all([
+      // Parallel fetch (optimized: skip full history initially)
+      const [profileRes, recentLogsRes] = await Promise.all([
         getProfile(user.id),
-        getRecentLogs(user.id, 90),
-        getAllLogs(user.id)
+        getRecentLogs(user.id, 90)
       ]);
 
       if (profileRes.error) throw profileRes.error;
@@ -39,7 +38,8 @@ export function DataProvider({ children }) {
         email: profileRes.data?.email || user.email 
       });
       setRecentLogs(recentLogsRes.data || []);
-      setAllLogs(allLogsRes.data || []);
+      setRecentLogs(recentLogsRes.data || []);
+      // setAllLogs(allLogsRes.data || []); -- Loaded lazily elsewhere now
       
     } catch (err) {
       console.error("Error fetching data:", err);

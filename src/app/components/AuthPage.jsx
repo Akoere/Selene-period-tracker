@@ -68,6 +68,7 @@ export function AuthPage() {
           password,
           options: {
             data: { full_name: name },
+            emailRedirectTo: window.location.origin,
           },
         });
         if (error) throw error;
@@ -106,10 +107,10 @@ export function AuthPage() {
         
         {/* Logo & Welcome */}
         <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-gradient-to-br from-pink-400 to-purple-400 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg p-4">
+          <div className="w-20 h-20 bg-linear-to-br from-pink-400 to-purple-400 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg p-4">
              <img src={logoImage} alt="Logo" className="w-full h-full object-contain" />
           </div>
-          <h1 className="text-4xl font-semibold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent mb-2">
+          <h1 className="text-4xl font-semibold bg-linear-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent mb-2">
             Welcome to Selene
           </h1>
           <p className="text-gray-600">
@@ -237,7 +238,7 @@ export function AuthPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-4 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-xl font-semibold hover:shadow-lg hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full py-4 bg-linear-to-r from-pink-500 to-purple-500 text-white rounded-xl font-semibold hover:shadow-lg hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />

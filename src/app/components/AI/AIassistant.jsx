@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Send, Sparkles, X, Bot, Loader2, AlertCircle } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import logoImage from '@/assets/selene-logo.png';
 
 export function AIAssistant() {
   const [isOpen, setIsOpen] = useState(false);
@@ -81,11 +82,12 @@ export function AIAssistant() {
     loadContext();
   }, [isOpen]); // Reload when opened
 
-  const handleSend = async () => {
-    if (!inputValue.trim()) return;
+  const handleSend = async (textOverride = null) => {
+    // 1. Determine text to send
+    const userText = (typeof textOverride === 'string' ? textOverride : inputValue).trim();
+    if (!userText) return;
 
-    // 1. Add User Message immediately
-    const userText = inputValue;
+    // 2. Add User Message immediately
     const userMessage = {
       id: Date.now().toString(),
       text: userText,
@@ -93,7 +95,7 @@ export function AIAssistant() {
       timestamp: new Date(),
     };
     setMessages(prev => [...prev, userMessage]);
-    setInputValue('');
+    setInputValue(''); // Clear input regardless
     setIsTyping(true);
 
     try {
@@ -171,12 +173,11 @@ export function AIAssistant() {
       {/* Header */}
       <div className={`p-4 text-white flex items-center justify-between bg-linear-to-r ${gradient}`}>
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-            <Bot className="w-5 h-5 text-white" />
+          <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm p-1">
+            <img src={logoImage} alt="Selene" className="w-full h-full object-contain" />
           </div>
           <div>
             <h3 className="font-bold text-sm">Selene</h3>
-            <p className="text-[10px] opacity-80">Powered by Gemini</p>
           </div>
         </div>
         <button
@@ -232,6 +233,27 @@ export function AIAssistant() {
           </div>
         )}
         <div ref={messagesEndRef} />
+
+        {/* Suggested Questions (Show only when chat is empty/fresh) */}
+        {messages.length === 1 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-4 px-2">
+            {[
+              "When is my next period?",
+              "Why do I feel tired?",
+              "Tips for cramp relief?",
+              "Is my cycle normal?",
+            ].map((q, idx) => (
+              <button
+                key={idx}
+                onClick={() => handleSend(q)}
+                className="text-xs text-left p-3 rounded-xl border hover:bg-white/50 dark:hover:bg-white/5 transition-colors text-(--foreground) opacity-80 hover:opacity-100"
+                style={{ borderColor: 'var(--card-border)' }}
+              >
+                {q}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Input Area */}

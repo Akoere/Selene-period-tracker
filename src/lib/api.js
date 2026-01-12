@@ -124,17 +124,13 @@ export async function uploadAvatar(file) {
 // --- SUPPORT FUNCTIONS ---
 
 export async function createSupportTicket(ticketData) {
-  // ticketData: { name, email, message, user_id (optional) }
-  const { data, error } = await supabase
-    .from('support_tickets')
-    .insert([
-      { 
-        ...ticketData,
-        status: 'open',
-        created_at: new Date().toISOString()
-      }
-    ])
-    .select();
+  // Use RPC function 'submit_ticket' to bypass RLS policies safely
+  const { data, error } = await supabase.rpc('submit_ticket', {
+    name: ticketData.name,
+    email: ticketData.email,
+    message: ticketData.message,
+    user_id: ticketData.user_id || null, // Handle null explicitly
+  });
 
   return { data, error };
 }
