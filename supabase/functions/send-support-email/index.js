@@ -1,4 +1,3 @@
-// @ts-nocheck
 // Setup: 
 // 1. supabase secrets set RESEND_API_KEY=re_123...
 // 2. supabase functions deploy send-support-email
@@ -12,7 +11,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-serve(async (req: Request) => {
+serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -52,7 +51,7 @@ serve(async (req: Request) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
-  } catch (error: any) {
+  } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 400,

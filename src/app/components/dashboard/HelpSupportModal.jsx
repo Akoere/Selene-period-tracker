@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { X, Send, Mail, User, MessageSquare, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
+import { supabase } from '@/lib/supabase'; // Import at top
+import { createSupportTicket } from '@/lib/api'; // Import at top
 
 export function HelpSupportModal({ isOpen, onClose }) {
     const { currentTheme } = useTheme();
@@ -26,8 +28,8 @@ export function HelpSupportModal({ isOpen, onClose }) {
         setSuccess(false);
 
         try {
-            // 1. Save to Supabase (Database)
-            const { data: { user } } = await import('@/lib/supabase').then(m => m.supabase.auth.getUser());
+            // 1. Get User
+            const { data: { user } } = await supabase.auth.getUser();
             
             const ticketData = {
                 name: formData.name,
@@ -36,25 +38,22 @@ export function HelpSupportModal({ isOpen, onClose }) {
                 user_id: user ? user.id : null
             };
 
-            const { createSupportTicket } = await import('@/lib/api');
+            // 2. Save to Database
+            // If this fails, it usually means the 'support_tickets' table is missing
             const { error: dbError } = await createSupportTicket(ticketData);
 
             if (dbError) {
                 console.error("Database Error:", dbError);
-                throw new Error("Failed to save message to database.");
+                throw new Error("Could not save ticket. database table might be missing.");
             }
 
-            // 2. Call Edge Function (Supabase)
-            try {
-                const { error: fnError } = await import('@/lib/supabase').then(m => 
-                    m.supabase.functions.invoke('send-support-email', {
-                        body: ticketData
-                    })
-                );
-                if (fnError) console.warn("Email Function Error:", fnError);
-            } catch (fnErr) {
-                 console.warn("Failed to invoke edge function", fnErr);
-            }
+            // 3. Call Edge Function (Send Email)
+            // We don't block the UI if this fails, just log it
+            const { error: fnError } = await supabase.functions.invoke('send-support-email', {
+                body: ticketData
+            });
+            
+            if (fnError) console.warn("Email Function Error:", fnError);
 
             setSuccess(true);
             setFormData({ name: '', email: '', message: '' });
@@ -68,18 +67,14 @@ export function HelpSupportModal({ isOpen, onClose }) {
 
     return (
         <div className="fixed inset-0 z-70 flex items-end md:items-center justify-center p-0 md:p-4">
-            {/* Backdrop */}
             <div
                 className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300"
                 onClick={onClose}
             />
-
-            {/* Modal */}
             <div
                 className="relative w-full max-w-md rounded-t-3xl md:rounded-3xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-10 fade-in zoom-in-95 duration-300 flex flex-col max-h-[90vh]"
                 style={{ backgroundColor: 'var(--card-bg)', color: 'var(--foreground)', border: '1px solid var(--card-border)' }}
             >
-                {/* Header */}
                 <div className="p-4 border-b flex items-center justify-between" style={{ borderColor: 'var(--card-border)' }}>
                     <h2 className="text-xl font-bold">Help & Support</h2>
                     <button onClick={onClose} className="p-2 rounded-full hover:bg-gray-100/10 active:scale-95 transition-transform">
@@ -87,7 +82,6 @@ export function HelpSupportModal({ isOpen, onClose }) {
                     </button>
                 </div>
 
-                {/* Content */}
                 <div className="p-6 overflow-y-auto pb-10 md:pb-6">
                     {success ? (
                         <div className="text-center py-10 space-y-4 animate-in fade-in slide-in-from-bottom-4">
@@ -111,7 +105,6 @@ export function HelpSupportModal({ isOpen, onClose }) {
                             </div>
 
                             <form onSubmit={handleSubmit} className="space-y-4">
-                                {/* Name */}
                                 <div className="space-y-1">
                                     <label htmlFor="name" className="text-sm font-medium opacity-70">Name</label>
                                     <div className="relative">
@@ -128,8 +121,6 @@ export function HelpSupportModal({ isOpen, onClose }) {
                                         />
                                     </div>
                                 </div>
-
-                                {/* Email */}
                                 <div className="space-y-1">
                                     <label htmlFor="email" className="text-sm font-medium opacity-70">Email</label>
                                     <div className="relative">
@@ -146,8 +137,6 @@ export function HelpSupportModal({ isOpen, onClose }) {
                                         />
                                     </div>
                                 </div>
-
-                                {/* Message */}
                                 <div className="space-y-1">
                                     <label htmlFor="message" className="text-sm font-medium opacity-70">Message</label>
                                     <div className="relative">
@@ -193,9 +182,8 @@ export function HelpSupportModal({ isOpen, onClose }) {
                             </form>
                         </>
                     )}
-
                     <div className="mt-8 text-center pt-4 border-t opacity-40 text-xs" style={{ borderColor: 'var(--card-border)' }}>
-                        <p>&copy; {new Date().getFullYear()} ST.Akoere. All rights reserved.</p>
+                        <p>&copy; {new Date().getFullYear()} Selene. All rights reserved.</p>
                     </div>
                 </div>
             </div>
