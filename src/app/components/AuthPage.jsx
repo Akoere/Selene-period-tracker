@@ -88,9 +88,16 @@ export function AuthPage() {
       setIsLoading(true);
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
-        // CRITICAL: Ensure redirect goes back to where you are (including mobile IP)
         options: {
-          redirectTo: window.location.origin, 
+          // "Smart" Redirect: Uses Vercel URL on live site, Localhost on dev
+          redirectTo: window.location.origin,
+          
+          // ADDED: Forces the Google consent screen to show every time
+          // This helps avoid "sticky" session issues on mobile
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
         }
       });
       if (error) throw error;
@@ -158,7 +165,6 @@ export function AuthPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Enter your name"
-                    // FIX APPLIED HERE: Added 'text-gray-900 placeholder-gray-400'
                     className={`w-full pl-12 pr-4 py-3.5 rounded-xl border-2 transition-all focus:outline-none text-gray-900 placeholder-gray-400 ${
                       errors.name ? 'border-red-300 focus:border-red-500' : 'border-gray-100 focus:border-pink-400 bg-gray-50 focus:bg-white'
                     }`}
@@ -178,7 +184,6 @@ export function AuthPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
-                  // FIX APPLIED HERE: Added 'text-gray-900 placeholder-gray-400'
                   className={`w-full pl-12 pr-4 py-3.5 rounded-xl border-2 transition-all focus:outline-none text-gray-900 placeholder-gray-400 ${
                     errors.email ? 'border-red-300 focus:border-red-500' : 'border-gray-100 focus:border-pink-400 bg-gray-50 focus:bg-white'
                   }`}
@@ -197,7 +202,6 @@ export function AuthPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
-                  // FIX APPLIED HERE: Added 'text-gray-900 placeholder-gray-400'
                   className={`w-full pl-12 pr-12 py-3.5 rounded-xl border-2 transition-all focus:outline-none text-gray-900 placeholder-gray-400 ${
                     errors.password ? 'border-red-300 focus:border-red-500' : 'border-gray-100 focus:border-pink-400 bg-gray-50 focus:bg-white'
                   }`}
@@ -224,7 +228,6 @@ export function AuthPage() {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Confirm password"
-                    // FIX APPLIED HERE: Added 'text-gray-900 placeholder-gray-400'
                     className={`w-full pl-12 pr-4 py-3.5 rounded-xl border-2 transition-all focus:outline-none text-gray-900 placeholder-gray-400 ${
                       errors.confirmPassword ? 'border-red-300 focus:border-red-500' : 'border-gray-100 focus:border-pink-400 bg-gray-50 focus:bg-white'
                     }`}
