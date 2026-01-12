@@ -6,7 +6,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useSecurity } from '../../context/SecurityContext';
 import { PinPad } from '../security/PinPad'; // Import PinPad
 
-export function ProfileSettingsModal({ isOpen, onClose, profile, setProfile, onUpdateProfile }) {
+export function ProfileSettingsModal({ isOpen, onClose, activeTab, initialData, onUpdate }) {
     const [loading, setLoading] = useState(false);
     const { currentTheme } = useTheme();
     const { 
