@@ -1,15 +1,14 @@
 import { useState } from 'react';
 import { Sidebar } from './Sidebar';
 import { BottomNav } from './BottomNav';
+import { PWAPrompt } from './PWAPrompt'; // Import correctly at the top
 
 export function AppLayout({ children }) {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   return (
     <div 
-      // 1. CLASS: Removed 'bg-gray-50'
       className="min-h-screen flex flex-col md:flex-row transition-colors duration-300"
-      // 2. STYLE: Force the background and text color to match the theme
       style={{ 
         backgroundColor: 'var(--background)', 
         color: 'var(--foreground)' 
@@ -39,11 +38,9 @@ export function AppLayout({ children }) {
       {/* Mobile Bottom Nav */}
       <BottomNav />
 
-      {/* Mobile Install Banner */}
-      <MobileInstallBanner />
+      {/* PWA Prompt */}
+      <PWAPrompt />
       
     </div>
   );
 }
-
-import { MobileInstallBanner } from './MobileInstallBanner';

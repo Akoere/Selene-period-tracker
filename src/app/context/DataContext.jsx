@@ -33,7 +33,11 @@ export function DataProvider({ children }) {
 
       if (profileRes.error) throw profileRes.error;
       
-      setProfile(profileRes.data);
+      // Merge Auth Email with Profile Data (Fallback if DB is empty)
+      setProfile({
+        ...profileRes.data,
+        email: profileRes.data?.email || user.email 
+      });
       setRecentLogs(recentLogsRes.data || []);
       setAllLogs(allLogsRes.data || []);
       
