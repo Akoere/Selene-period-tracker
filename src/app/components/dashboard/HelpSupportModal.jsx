@@ -44,7 +44,10 @@ export function HelpSupportModal({ isOpen, onClose }) {
 
             if (dbError) {
                 console.error("Database Error:", dbError);
-                throw new Error("Could not save ticket. database table might be missing.");
+                if (dbError.code === '42P01') {
+                    throw new Error("Support system unavailable (Table Missing). Please contact admin.");
+                }
+                throw dbError;
             }
 
             // 3. Call Edge Function (Send Email)
@@ -116,8 +119,8 @@ export function HelpSupportModal({ isOpen, onClose }) {
                                             placeholder="Your name"
                                             value={formData.name}
                                             onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                            className="w-full pl-10 pr-4 py-3 rounded-xl border bg-transparent focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all"
-                                            style={{ borderColor: 'var(--card-border)', '--tw-ring-color': primaryColor }}
+                                            className="w-full pl-10 pr-4 py-3 rounded-xl border bg-transparent focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all placeholder:text-gray-400"
+                                            style={{ borderColor: 'var(--card-border)', '--tw-ring-color': primaryColor, color: 'var(--foreground)' }}
                                         />
                                     </div>
                                 </div>
@@ -132,8 +135,8 @@ export function HelpSupportModal({ isOpen, onClose }) {
                                             placeholder="you@example.com"
                                             value={formData.email}
                                             onChange={e => setFormData({ ...formData, email: e.target.value })}
-                                            className="w-full pl-10 pr-4 py-3 rounded-xl border bg-transparent focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all"
-                                            style={{ borderColor: 'var(--card-border)', '--tw-ring-color': primaryColor }}
+                                            className="w-full pl-10 pr-4 py-3 rounded-xl border bg-transparent focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all placeholder:text-gray-400"
+                                            style={{ borderColor: 'var(--card-border)', '--tw-ring-color': primaryColor, color: 'var(--foreground)' }}
                                         />
                                     </div>
                                 </div>
@@ -148,8 +151,8 @@ export function HelpSupportModal({ isOpen, onClose }) {
                                             placeholder="Your message here..."
                                             value={formData.message}
                                             onChange={e => setFormData({ ...formData, message: e.target.value })}
-                                            className="w-full pl-10 pr-4 py-3 rounded-xl border bg-transparent focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all resize-none"
-                                            style={{ borderColor: 'var(--card-border)', '--tw-ring-color': primaryColor }}
+                                            className="w-full pl-10 pr-4 py-3 rounded-xl border bg-transparent focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all resize-none placeholder:text-gray-400"
+                                            style={{ borderColor: 'var(--card-border)', '--tw-ring-color': primaryColor, color: 'var(--foreground)' }}
                                         ></textarea>
                                     </div>
                                 </div>

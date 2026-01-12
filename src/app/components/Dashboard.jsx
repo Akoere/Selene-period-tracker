@@ -153,7 +153,8 @@ export function Dashboard() {
 
       {/* Modern Hero Card (Glassmorphism) */}
       <div
-        className="relative overflow-hidden rounded-[2.5rem] p-8 md:p-10 shadow-xl transition-all duration-500 group bg-white dark:bg-gray-900 border border-white/40 dark:border-white/10"
+        className="relative overflow-hidden rounded-[2.5rem] p-8 md:p-10 shadow-xl transition-all duration-500 group border"
+        style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' }}
       >
         {/* Subtle Background Elements */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-linear-to-br from-pink-200/30 to-purple-200/30 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
@@ -167,16 +168,23 @@ export function Dashboard() {
               {/* Main Cycle Indicator */}
               <div className="relative mb-6">
                 {/* Ring Animation */}
-                <div className="absolute inset-0 rounded-full animate-pulse opacity-20" style={{ backgroundColor: primaryColor }}></div>
+                <div 
+                    className="absolute inset-0 rounded-full animate-pulse opacity-20" 
+                    style={{ backgroundColor: primaryColor }}
+                ></div>
 
                 <div
-                  className="w-40 h-40 md:w-48 md:h-48 rounded-full flex items-center justify-center relative backdrop-blur-sm bg-white/30 dark:bg-black/10 shadow-inner border border-white/40"
+                  className="w-40 h-40 md:w-48 md:h-48 rounded-full flex items-center justify-center relative backdrop-blur-sm shadow-inner border"
+                  style={{ 
+                      backgroundColor: 'var(--background)',
+                      borderColor: 'var(--card-border)'
+                  }}
                 >
                   <div className="text-center">
                     <span className="block text-6xl md:text-7xl font-bold tracking-tighter" style={{ color: primaryColor }}>
                       {cycleDay || '?'}
                     </span>
-                    <span className="text-xs font-bold opacity-40 uppercase tracking-widest mt-1 block dark:text-gray-300">
+                    <span className="text-xs font-bold opacity-40 uppercase tracking-widest mt-1 block" style={{ color: 'var(--foreground)' }}>
                       {cycleDay ? 'Days' : 'No Data'}
                     </span>
                   </div>
@@ -185,10 +193,10 @@ export function Dashboard() {
 
               {/* Status Text */}
               <div className="space-y-1">
-                <h2 className="text-2xl font-bold tracking-tight text-(--foreground) dark:text-white">
+                <h2 className="text-2xl font-bold tracking-tight" style={{ color: 'var(--foreground)' }}>
                   {phase} Phase
                 </h2>
-                <div className="flex items-center justify-center gap-2 opacity-60 text-sm dark:text-gray-300">
+                <div className="flex items-center justify-center gap-2 opacity-60 text-sm" style={{ color: 'var(--foreground)' }}>
                   <Sparkles className="w-3 h-3" />
                   <span>{cycleDay ? 'Tracking Active' : 'Waiting for input'}</span>
                 </div>
@@ -233,10 +241,11 @@ export function Dashboard() {
           <button
             key={idx}
             onClick={item.action}
-            className="relative overflow-hidden p-5 rounded-3xl text-left transition-all hover:scale-[1.02] active:scale-95 group shadow-sm hover:shadow-md bg-white dark:bg-gray-800 border border-white/50 dark:border-white/10"
+            className="relative overflow-hidden p-5 rounded-3xl text-left transition-all hover:scale-[1.02] active:scale-95 group shadow-sm hover:shadow-md border"
+            style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' }}
           >
             <div className="absolute top-0 right-0 p-4 opacity-50 group-hover:opacity-100 transition-opacity">
-              <ChevronRight className="w-5 h-5 opacity-20 dark:text-gray-400" />
+              <ChevronRight className="w-5 h-5 opacity-20" style={{ color: 'var(--foreground)' }} />
             </div>
 
             <div
@@ -247,8 +256,8 @@ export function Dashboard() {
             </div>
 
             <div>
-              <h3 className="font-bold text-lg leading-tight mb-1 text-(--foreground) dark:text-white">{item.label}</h3>
-              <p className="text-xs opacity-50 font-medium dark:text-gray-400">{item.desc}</p>
+              <h3 className="font-bold text-lg leading-tight mb-1" style={{ color: 'var(--foreground)' }}>{item.label}</h3>
+              <p className="text-xs opacity-50 font-medium" style={{ color: 'var(--foreground)' }}>{item.desc}</p>
             </div>
           </button>
         ))}

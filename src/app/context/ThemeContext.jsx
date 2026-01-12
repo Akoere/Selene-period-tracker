@@ -80,6 +80,13 @@ export function ThemeProvider({ children }) {
     document.body.style.color = colors.foreground;
     document.body.style.transition = 'background-color 0.3s ease'; 
 
+    // Toggle Dark Mode Class for Tailwind
+    if (themeId === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+
   }, [themeId, currentTheme]);
 
   return (

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Save, User, Calendar, Bell, Shield, HelpCircle, Loader2, Trash2, Camera, EyeOff } from 'lucide-react';
+import { X, Save, User, Calendar, Bell, Shield, HelpCircle, Loader2, Trash2, Camera, EyeOff, Lock as LockIcon } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { updateProfile, uploadAvatar } from '@/lib/api';
 import { useTheme } from '../../context/ThemeContext';
@@ -64,7 +64,7 @@ export function ProfileSettingsModal({ isOpen, onClose, activeTab, initialData, 
             const updates = {};
             if (activeTab === 'Personal Details') {
                 updates.full_name = fullName;
-                updates.date_of_birth = dob;
+                updates.date_of_birth = dob === '' ? null : dob;
                 updates.avatar_url = avatarUrl;
             } else if (activeTab === 'Cycle Settings') {
                 updates.cycle_length = parseInt(cycleLength);
@@ -77,8 +77,9 @@ export function ProfileSettingsModal({ isOpen, onClose, activeTab, initialData, 
             if (onUpdate) onUpdate(updates);
             onClose();
         } catch (error) {
+
             console.error('Error updating profile:', error);
-            alert('Failed to update profile.');
+            alert(`Failed to update profile: ${error.message}`);
         } finally {
             setLoading(false);
         }
@@ -231,33 +232,18 @@ export function ProfileSettingsModal({ isOpen, onClose, activeTab, initialData, 
             case 'Privacy & Security':
                 return (
                     <div className="space-y-6">
-                            <div className="flex items-center justify-between p-4 rounded-xl border" style={{ borderColor: 'var(--card-border)' }}>
-                                <div className="flex items-center gap-3">
-                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center`} style={{ backgroundColor: `${primaryColor}15` }}>
-                                        <Shield className="w-5 h-5" style={{ color: primaryColor }} />
+                            {/* PIN Code Toggle */}
+                            <div 
+                                className="flex items-center justify-between p-5 rounded-2xl shadow-sm transition-shadow hover:shadow-md border"
+                                style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' }}
+                            >
+                                <div className="flex items-center gap-4">
+                                    <div className="p-3 rounded-xl bg-pink-50 text-pink-500 dark:bg-pink-900/20">
+                                        <LockIcon className="w-5 h-5" />
                                     </div>
                                     <div>
-                                        <p className="font-medium">App Lock (Biometrics/PIN)</p>
-                                        <p className="text-xs opacity-50">{isSupported ? "Use FaceID/Fingerprint to unlock" : "Biometrics unavailable (Unlock via confirmation)"}</p>
-                                    </div>
-                                </div>
-                                <button
-                                    onClick={() => toggleBiometrics(!biometricsEnabled)}
-                                    className={`w-11 h-6 rounded-full transition-colors relative ${biometricsEnabled ? 'opacity-100' : 'bg-gray-200 dark:bg-gray-700'}`}
-                                    style={{ backgroundColor: biometricsEnabled ? primaryColor : undefined }}
-                                >
-                                    <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${biometricsEnabled ? 'translate-x-5' : 'translate-x-0'}`} />
-                                </button>
-                            </div>
-
-                            <div className="flex items-center justify-between p-4 rounded-2xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10">
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2.5 rounded-xl bg-gray-200 dark:bg-gray-700">
-                                        <Lock className="w-5 h-5" />
-                                    </div>
-                                    <div>
-                                        <h3 className="font-medium">App Lock</h3>
-                                        <p className="text-sm opacity-60">Secure with PIN Code</p>
+                                        <h3 className="font-semibold" style={{ color: 'var(--foreground)' }}>App Lock</h3>
+                                        <p className="text-sm opacity-60" style={{ color: 'var(--foreground)' }}>Secure with PIN Code</p>
                                     </div>
                                 </div>
                                 <button
@@ -268,43 +254,47 @@ export function ProfileSettingsModal({ isOpen, onClose, activeTab, initialData, 
                                             setShowPinSetup(true);
                                         }
                                     }}
-                                    className={`relative w-12 h-7 rounded-full transition-colors duration-200 ${
+                                    className={`relative w-14 h-8 rounded-full transition-colors duration-300 ${
                                         isPinEnabled ? 'bg-pink-500' : 'bg-gray-200 dark:bg-gray-700'
                                     }`}
                                 >
-                                    <div className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${
-                                        isPinEnabled ? 'translate-x-5' : 'translate-x-0'
+                                    <div className={`absolute top-1 left-1 w-6 h-6 rounded-full bg-white shadow-sm transition-transform duration-300 ${
+                                        isPinEnabled ? 'translate-x-6' : 'translate-x-0'
                                     }`} />
                                 </button>
                             </div>
 
                             {/* Privacy Mode Toggle */}
-                            <div className="flex items-center justify-between p-4 rounded-2xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10">
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2.5 rounded-xl bg-gray-200 dark:bg-gray-700">
+                            <div 
+                                className="flex items-center justify-between p-5 rounded-2xl shadow-sm transition-shadow hover:shadow-md border"
+                                style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' }}
+                            >
+                                <div className="flex items-center gap-4">
+                                    <div className="p-3 rounded-xl bg-purple-50 text-purple-500 dark:bg-purple-900/20">
                                         <EyeOff className="w-5 h-5" />
                                     </div>
                                     <div>
-                                        <h3 className="font-medium">Privacy Mode</h3>
-                                        <p className="text-sm opacity-60">Hide sensitive numbers</p>
+                                        <h3 className="font-semibold" style={{ color: 'var(--foreground)' }}>Privacy Mode</h3>
+                                        <p className="text-sm opacity-60" style={{ color: 'var(--foreground)' }}>Hide sensitive numbers</p>
                                     </div>
                                 </div>
                                 <button
                                     onClick={() => togglePrivacyMode(!privacyMode)}
-                                    className={`relative w-12 h-7 rounded-full transition-colors duration-200 ${
-                                        privacyMode ? 'bg-pink-500' : 'bg-gray-200 dark:bg-gray-700'
+                                    className={`relative w-14 h-8 rounded-full transition-colors duration-300 ${
+                                        privacyMode ? 'bg-purple-500' : 'bg-gray-200 dark:bg-gray-700'
                                     }`}
                                 >
-                                    <div className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${
-                                        privacyMode ? 'translate-x-5' : 'translate-x-0'
+                                    <div className={`absolute top-1 left-1 w-6 h-6 rounded-full bg-white shadow-sm transition-transform duration-300 ${
+                                        privacyMode ? 'translate-x-6' : 'translate-x-0'
                                     }`} />
                                 </button>
                             </div>
 
-
-                {/* PIN Setup Overlay */}
                 {showPinSetup && (
-                    <div className="absolute inset-0 z-50 bg-white dark:bg-zinc-900 flex flex-col">
+                    <div 
+                        className="absolute inset-0 z-50 flex flex-col"
+                        style={{ backgroundColor: 'var(--card-bg)' }}
+                    >
                         <div className="p-4">
                             <button onClick={() => setShowPinSetup(false)} className="text-sm">Cancel</button>
                         </div>
@@ -320,22 +310,22 @@ export function ProfileSettingsModal({ isOpen, onClose, activeTab, initialData, 
                     </div>
                 )}
                             <div className="pt-6 border-t md:pt-4" style={{ borderColor: 'var(--card-border)' }}>
-                                <h3 className="text-sm font-bold text-red-500 mb-3 uppercase tracking-wider">Danger Zone</h3>
+                                <h3 className="text-sm font-bold opacity-60 mb-3 uppercase tracking-wider" style={{ color: 'var(--foreground)' }}>Data Management</h3>
                                 <div className="flex items-center justify-between p-4 rounded-xl border border-red-200 bg-red-50 dark:bg-red-900/10">
                                     <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 rounded-full flex items-center justify-center bg-red-100 text-red-600 dark:bg-red-900/40">
                                             <Trash2 className="w-5 h-5" />
                                         </div>
                                         <div>
-                                            <p className="font-medium text-red-600 dark:text-red-400">Clear All Data</p>
-                                            <p className="text-xs opacity-60 text-red-600/70 dark:text-red-400/70">Permanently delete all your daily logs</p>
+                                            <p className="font-medium text-red-600 dark:text-red-400">Reset App Data</p>
+                                            <p className="text-xs opacity-60 text-red-600/70 dark:text-red-400/70">Permanently delete your history</p>
                                         </div>
                                     </div>
                                     <button
                                         onClick={handleClearData}
                                         className="px-4 py-2 text-sm font-bold text-red-500 bg-white dark:bg-black/20 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
                                     >
-                                        Clear
+                                        Reset
                                     </button>
                                 </div>
                             </div>

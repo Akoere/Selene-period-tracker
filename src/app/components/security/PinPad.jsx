@@ -59,12 +59,10 @@ export function PinPad({ onClose, isSettingUp = false, onPinSet }) {
         }
     };
     
-    // Aesthetic: Clean, no glow, solid colors
     return (
         <div className="flex flex-col items-center justify-center w-full max-w-sm mx-auto p-4 animate-in fade-in zoom-in-95 duration-300">
-            {/* Header */}
             <div className="mb-12 text-center space-y-2">
-                <h3 className="text-xl font-medium text-gray-900 dark:text-white">
+                <h3 className="text-xl font-medium" style={{ color: 'var(--foreground)' }}>
                     {isSettingUp 
                         ? (step === 'create' ? 'Create PIN' : 'Confirm PIN')
                         : 'Enter PIN'}
@@ -75,16 +73,20 @@ export function PinPad({ onClose, isSettingUp = false, onPinSet }) {
                             key={i} 
                             className={`w-4 h-4 rounded-full transition-all duration-200 ${
                                 i < pin.length 
-                                    ? (error ? 'bg-red-500 scale-110' : 'bg-gray-800 dark:bg-white scale-100') 
-                                    : 'bg-gray-200 dark:bg-gray-700'
+                                    ? (error ? 'bg-red-500 scale-110' : 'scale-100') 
+                                    : ''
                             }`}
+                            style={{ 
+                                backgroundColor: i < pin.length && !error ? 'var(--foreground)' : undefined,
+                                border: i < pin.length ? 'none' : '2px solid var(--card-border)' 
+                            }}
                         />
                     ))}
                 </div>
             </div>
 
             {/* Grid */}
-            <div className="grid grid-cols-3 gap-x-8 gap-y-6 w-full max-w-[280px]">
+            <div className="grid grid-cols-3 gap-x-8 gap-y-4 w-full max-w-[260px]">
                 {numbers.map((num, idx) => {
                     if (num === '') return <div key={idx} />;
                     
@@ -93,7 +95,8 @@ export function PinPad({ onClose, isSettingUp = false, onPinSet }) {
                         <button
                             key={idx}
                             onClick={() => handlePress(num)}
-                            className="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-normal text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 active:scale-95 transition-all outline-none focus:outline-none"
+                            className="w-14 h-14 rounded-full flex items-center justify-center text-2xl font-normal transition-all outline-none focus:outline-none hover:bg-black/5 dark:hover:bg-white/10 active:scale-95"
+                            style={{ color: 'var(--foreground)' }}
                         >
                             {isDel ? <Delete className="w-6 h-6 opacity-50" /> : num}
                         </button>

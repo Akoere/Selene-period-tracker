@@ -34,7 +34,7 @@ export default function App() {
       if (session) {
         const { data: profile } = await getProfile(session.user.id);
         // Fix: Check if profile has cycle data OR explicit onboarding flag
-        if (profile && (profile.is_onboarded || profile.cycle_length)) {
+        if (profile && profile.is_onboarded) {
           setOnboardingComplete(true);
         }
       }

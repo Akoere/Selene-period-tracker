@@ -72,6 +72,15 @@ export function OnboardingFlow({ onComplete }) {
     if (currentStep > 0) setCurrentStep(currentStep - 1);
   };
 
+  // Validation Logic
+  const isStepValid = () => {
+    if (currentStep === 3) { // Cycle Info Step
+      // Must have a date selected
+      return formData.lastPeriodDate && formData.lastPeriodDate !== '';
+    }
+    return true;
+  };
+
   // Render the current step with props
   const renderStep = () => {
     switch (currentStep) {
@@ -86,7 +95,7 @@ export function OnboardingFlow({ onComplete }) {
   };
 
   return (
-    <div className="size-full bg-gradient-to-br from-pink-50 via-purple-50 to-pink-100 flex items-center justify-center p-4">
+    <div className="size-full bg-linear-to-br from-pink-50 via-purple-50 to-pink-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Progress Bar */}
         <div className="mb-8">
@@ -96,7 +105,7 @@ export function OnboardingFlow({ onComplete }) {
                 key={index}
                 className={`h-2 flex-1 rounded-full mx-1 transition-all duration-300 ${
                   index <= currentStep
-                    ? 'bg-gradient-to-r from-pink-400 to-purple-400'
+                    ? 'bg-linear-to-r from-pink-400 to-purple-400'
                     : 'bg-gray-200'
                 }`}
               />
@@ -137,8 +146,8 @@ export function OnboardingFlow({ onComplete }) {
 
             <button
               onClick={nextStep}
-              disabled={saving}
-              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-pink-400 to-purple-400 text-white rounded-full hover:from-pink-500 hover:to-purple-500 transition-all shadow-md hover:shadow-lg disabled:opacity-70"
+              disabled={saving || !isStepValid()}
+              className="flex items-center gap-2 px-6 py-3 bg-linear-to-r from-pink-400 to-purple-400 text-white rounded-full hover:from-pink-500 hover:to-purple-500 transition-all shadow-md hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed disabled:grayscale"
             >
               {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : (
                 <>

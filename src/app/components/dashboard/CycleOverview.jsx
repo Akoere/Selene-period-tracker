@@ -149,7 +149,10 @@ export function CycleOverview() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white rounded-3xl shadow-lg overflow-hidden">
+      <div 
+        className="rounded-3xl shadow-lg overflow-hidden border transition-all"
+        style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' }}
+      >
         <div className={`bg-linear-to-r ${currentPhase.color} p-6 text-white`}>
           <div className="flex items-center justify-between mb-4">
             <div>
@@ -177,13 +180,13 @@ export function CycleOverview() {
 
         <div className="p-6">
           <div className="grid grid-cols-2 gap-4">
-            <div className="flex items-start gap-3 p-4 bg-pink-50 rounded-xl">
-              <div className="w-10 h-10 bg-pink-200 rounded-lg flex items-center justify-center shrink-0">
-                <Droplet className="w-5 h-5 text-pink-600" />
+            <div className="flex items-start gap-3 p-4 rounded-xl bg-pink-50 dark:bg-pink-900/10">
+              <div className="w-10 h-10 bg-pink-200 dark:bg-pink-900/30 rounded-lg flex items-center justify-center shrink-0">
+                <Droplet className="w-5 h-5 text-pink-600 dark:text-pink-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-600 mb-1">Next Period</p>
-                <p className="text-lg font-semibold text-gray-900">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Next Period</p>
+                <p className="text-lg font-semibold" style={{ color: 'var(--foreground)' }}>
                   {daysUntilPeriod !== null ? (
                     daysUntilPeriod < 0 ? 'Overdue' : `${daysUntilPeriod} days`
                   ) : 'Unknown'}
@@ -191,13 +194,13 @@ export function CycleOverview() {
               </div>
             </div>
 
-            <div className="flex items-start gap-3 p-4 bg-purple-50 rounded-xl">
-              <div className="w-10 h-10 bg-purple-200 rounded-lg flex items-center justify-center shrink-0">
-                <Calendar className="w-5 h-5 text-purple-600" />
+            <div className="flex items-start gap-3 p-4 rounded-xl bg-purple-50 dark:bg-purple-900/10">
+              <div className="w-10 h-10 bg-purple-200 dark:bg-purple-900/30 rounded-lg flex items-center justify-center shrink-0">
+                <Calendar className="w-5 h-5 text-purple-600 dark:text-purple-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-600 mb-1">Expected Date</p>
-                <p className="text-lg font-semibold text-gray-900">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Expected Date</p>
+                <p className="text-lg font-semibold" style={{ color: 'var(--foreground)' }}>
                   {nextPeriodDate ? format(nextPeriodDate, 'MMM d') : '-'}
                 </p>
               </div>
@@ -207,59 +210,69 @@ export function CycleOverview() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white rounded-2xl shadow p-6">
+        <div 
+          className="rounded-2xl shadow p-6 border transition-all"
+          style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' }}
+        >
           <div className="flex items-center gap-3 mb-3">
             <div className="w-12 h-12 bg-linear-to-br from-pink-400 to-pink-500 rounded-xl flex items-center justify-center">
               <Sparkles className="w-6 h-6 text-white" />
             </div>
             <div>
-              <p className="text-sm text-gray-600">Fertility</p>
-              <p className="font-semibold text-gray-900">
+              <p className="text-sm opacity-60" style={{ color: 'var(--foreground)' }}>Fertility</p>
+              <p className="font-semibold" style={{ color: 'var(--foreground)' }}>
                 {cyclePhase === 'ovulation' ? 'High' : cyclePhase === 'follicular' ? 'Rising' : 'Low'}
               </p>
             </div>
           </div>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs opacity-50" style={{ color: 'var(--foreground)' }}>
             {cyclePhase === 'ovulation' ? 'Peak fertility window' : 'Based on cycle phase'}
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow p-6">
+        <div 
+          className="rounded-2xl shadow p-6 border transition-all"
+          style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' }}
+        >
           <div className="flex items-center gap-3 mb-3">
             <div className="w-12 h-12 bg-linear-to-br from-purple-400 to-purple-500 rounded-xl flex items-center justify-center">
               <Calendar className="w-6 h-6 text-white" />
             </div>
             <div>
-              <p className="text-sm text-gray-600">Avg Cycle</p>
-              <p className="font-semibold text-gray-900">{cycleLength} days</p>
+              <p className="text-sm opacity-60" style={{ color: 'var(--foreground)' }}>Avg Cycle</p>
+              <p className="font-semibold" style={{ color: 'var(--foreground)' }}>{cycleLength} days</p>
             </div>
           </div>
-          <p className="text-xs text-gray-500">Based on profile settings</p>
+          <p className="text-xs opacity-50" style={{ color: 'var(--foreground)' }}>Based on profile settings</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow p-6">
+        <div 
+          className="rounded-2xl shadow p-6 border transition-all"
+          style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' }}
+        >
           <div className="flex items-center gap-3 mb-3">
             <div className="w-12 h-12 bg-linear-to-br from-blue-400 to-blue-500 rounded-xl flex items-center justify-center">
               <Droplet className="w-6 h-6 text-white" />
             </div>
             <div>
-              <p className="text-sm text-gray-600">Period Length</p>
-              <p className="font-semibold text-gray-900">{periodDuration} days</p>
+              <p className="text-sm opacity-60" style={{ color: 'var(--foreground)' }}>Period Length</p>
+              <p className="font-semibold" style={{ color: 'var(--foreground)' }}>{periodDuration} days</p>
             </div>
           </div>
-          <p className="text-xs text-gray-500">Average duration</p>
+          <p className="text-xs opacity-50" style={{ color: 'var(--foreground)' }}>Average duration</p>
         </div>
       </div>
 
       {/* Tip Card - Dynamic based on Phase */}
-      <div className="bg-linear-to-r from-pink-50 to-purple-50 rounded-2xl shadow p-6">
+      {/* Tip Card - Dynamic based on Phase */}
+      <div className="bg-linear-to-r from-pink-50 to-purple-50 dark:from-pink-900/10 dark:to-purple-900/10 rounded-2xl shadow p-6 border border-pink-100 dark:border-white/5">
         <div className="flex items-start gap-3">
-          <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shrink-0">
-            <AlertCircle className="w-5 h-5 text-purple-500" />
+          <div className="w-10 h-10 bg-white dark:bg-white/10 rounded-full flex items-center justify-center shrink-0">
+            <AlertCircle className="w-5 h-5 text-purple-500 dark:text-purple-300" />
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-2">💡 Today's Tip</h3>
-            <p className="text-sm text-gray-700 leading-relaxed">
+            <h3 className="font-semibold mb-2" style={{ color: 'var(--foreground)' }}>💡 Today's Tip</h3>
+            <p className="text-sm opacity-80 leading-relaxed" style={{ color: 'var(--foreground)' }}>
               {cyclePhase === 'menstrual' && "Rest and hydration are key. Listen to your body and take it easy."}
               {cyclePhase === 'follicular' && "Energy levels are rising! Great time to start new projects or exercise."}
               {cyclePhase === 'ovulation' && "You're likely feeling your best. Socialize and enjoy the high energy!"}

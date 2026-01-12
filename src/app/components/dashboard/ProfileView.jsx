@@ -70,59 +70,61 @@ export function ProfileView() {
     <div className="space-y-8 pb-24 px-2 md:px-0">
 
       {/* 1. Modern Header Profile Card */}
-      <div className="relative pt-4 flex flex-col items-center text-center">
-        {/* Avatar with Gradient Ring */}
-        <div className="space-y-6">
-            {/* Header Card - Fixed Colors */}
-            <div className={`p-6 rounded-3xl relative overflow-hidden bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 shadow-sm`}>
-                <div className="relative z-10 flex flex-col items-center">
-                    <div className="relative mb-4 group">
-                        <div className={`w-24 h-24 rounded-full p-1 bg-linear-to-br ${currentTheme.colors.gradient}`}>
-                            <div className="w-full h-full rounded-full border-4 border-white dark:border-zinc-900 overflow-hidden bg-white">
-                                {profile?.avatar_url ? (
-                                    /* Fix Avatar Load Time by using standard img tag with lazy loading off (eager) */
-                                    <img 
-                                        src={profile.avatar_url} 
-                                        alt="Profile" 
-                                        className="w-full h-full object-cover"
-                                        loading="eager"
-                                        decoding="sync"
-                                    />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center bg-gray-50 text-gray-300">
-                                        <User className="w-8 h-8" />
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <div className="relative pt-8 flex flex-col items-center text-center">
+        {/* Avatar - Clean, Modern, No Borders */}
+        <div className="relative mb-6">
+          <div className="w-32 h-32 rounded-full overflow-hidden relative flex items-center justify-center bg-gray-100/50 dark:bg-zinc-800 shadow-sm">
+            {profile?.avatar_url ? (
+              <img 
+                src={profile.avatar_url} 
+                alt="Profile" 
+                className="w-full h-full object-cover"
+                loading="eager"
+                decoding="sync"
+              />
+            ) : (
+              <span
+                className="text-4xl font-bold text-pink-500"
+              >
+                {profile?.full_name ? profile.full_name.substring(0, 2).toUpperCase() : 'ME'}
+              </span>
+            )}
+          </div>
+          {/* Edit Badge */}
+          <button 
+            onClick={() => handleMenuClick('Personal Details')}
+            className="absolute bottom-0 right-0 p-2 bg-white dark:bg-zinc-800 rounded-full shadow-md border border-gray-100 dark:border-white/10 text-gray-400 hover:text-pink-500 transition-colors"
+          >
+             <User className="w-4 h-4" />
+          </button>
         </div>
 
         {/* Name & Email */}
-        <h2 className="text-3xl font-extrabold tracking-tight mb-1" style={{ color: 'var(--foreground)' }}>
+        <h2 className="text-3xl font-bold tracking-tight mb-1" style={{ color: 'var(--foreground)' }}>
           {profile?.full_name || 'Selene User'}
         </h2>
-        <p className={`text-sm font-medium opacity-50 ${privacyMode ? 'blur-sm select-none' : ''}`} style={{ color: 'var(--foreground)' }}>
+        <p className={`text-sm font-medium opacity-60 ${privacyMode ? 'blur-sm select-none' : ''}`} style={{ color: 'var(--foreground)' }}>
           {privacyMode ? 'user@hidden.com' : (profile?.email || 'user@example.com')}
         </p>
 
-        {/* Quick Stats Row */}
-        <div className="mt-8 flex items-center justify-center divide-x divide-gray-200/20 backdrop-blur-sm bg-white dark:bg-gray-800/50 rounded-2xl p-4 shadow-sm border border-white/20">
-          <div className="px-6 text-center">
-            <span className={`block text-2xl font-bold ${privacyMode ? 'blur-sm select-none' : ''}`} style={{ color: colors.primary }}>
-             {privacyMode ? '**' : (age || '-')}
+        {/* Quick Stats Row - Modern Clean Look */}
+        <div 
+          className="mt-8 flex items-center justify-center divide-x divide-gray-200 dark:divide-white/10 rounded-2xl p-4 shadow-sm border transition-colors duration-300"
+          style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' }}
+        >
+          <div className="px-8 text-center">
+             <span className={`block text-2xl font-bold ${privacyMode ? 'blur-sm select-none' : ''}`} style={{ color: 'var(--foreground)' }}>
+              {privacyMode ? '**' : (age || '-')}
             </span>
-            <span className="text-[10px] opacity-60 uppercase tracking-widest">Age</span>
+            <span className="text-[10px] font-semibold uppercase tracking-widest mt-1 opacity-60" style={{ color: 'var(--foreground)' }}>Age</span>
           </div>
-          <div className="px-6 text-center">
-            <span className="block text-2xl font-bold" style={{ color: colors.primary }}>{profile?.cycle_length || 28}</span>
-            <span className="text-[10px] opacity-60 uppercase tracking-widest">Cycle</span>
+          <div className="px-8 text-center">
+            <span className="block text-2xl font-bold" style={{ color: 'var(--foreground)' }}>{profile?.cycle_length || 28}</span>
+            <span className="text-[10px] font-semibold uppercase tracking-widest mt-1 opacity-60" style={{ color: 'var(--foreground)' }}>Cycle</span>
           </div>
-          <div className="px-6 text-center">
-            <span className="block text-2xl font-bold" style={{ color: colors.primary }}>{profile?.period_length || 5}</span>
-            <span className="text-[10px] opacity-60 uppercase tracking-widest">Period</span>
+          <div className="px-8 text-center">
+            <span className="block text-2xl font-bold" style={{ color: 'var(--foreground)' }}>{profile?.period_length || 5}</span>
+            <span className="text-[10px] font-semibold uppercase tracking-widest mt-1 opacity-60" style={{ color: 'var(--foreground)' }}>Period</span>
           </div>
         </div>
       </div>
@@ -132,7 +134,8 @@ export function ProfileView() {
         <h3 className="px-4 text-xs font-semibold opacity-40 uppercase tracking-wider">Settings</h3>
 
         <div
-          className="rounded-3xl overflow-hidden backdrop-blur-xl bg-white dark:bg-gray-800/50 shadow-sm border border-white/20 transition-all hover:shadow-md"
+          className="rounded-3xl overflow-hidden backdrop-blur-xl shadow-sm border transition-all hover:shadow-md"
+          style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' }}
         >
           {menuItems.map((item, index) => {
             const Icon = item.icon;
@@ -162,7 +165,10 @@ export function ProfileView() {
       {/* 3. Appearance Section */}
       <div className="space-y-4">
         <h3 className="px-4 text-xs font-semibold opacity-40 uppercase tracking-wider">Appearance</h3>
-        <div className="rounded-3xl p-6 backdrop-blur-xl bg-white dark:bg-gray-800/50 shadow-sm border border-white/20">
+        <div 
+          className="rounded-3xl p-6 backdrop-blur-xl shadow-sm border transition-all"
+          style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' }}
+        >
           <ThemeSettings />
         </div>
       </div>

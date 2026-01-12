@@ -94,11 +94,13 @@ export function InsightsView() {
 
   // Reusable Glass Card Style
   // Dynamic Chart Colors
+  // Dynamic Chart Colors
   const isDark = document.documentElement.classList.contains('dark');
-  const axisColor = isDark ? '#ffffff60' : '#00000060';
-  const gridColor = isDark ? '#ffffff10' : '#00000010';
-  const tooltipBg = isDark ? 'rgba(0,0,0,0.9)' : 'rgba(255,255,255,0.9)';
-  const glassClass = "bg-white/65 dark:bg-gray-800/50 backdrop-blur-md border border-white/50 dark:border-white/10";
+  const axisColor = 'var(--foreground)';
+  const gridColor = 'var(--card-border)';
+  const tooltipBg = 'var(--card-bg)';
+  // const glassClass = "bg-white/65 dark:bg-gray-800/50 backdrop-blur-md border border-white/50 dark:border-white/10";
+  const glassStyle = { backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)' };
 
   return (
     <div className="space-y-8 pb-8 px-2 md:px-0">
@@ -110,52 +112,68 @@ export function InsightsView() {
       {/* --- STAT CARDS --- */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Cycle Card */}
-        <div className={`rounded-3xl p-5 shadow-sm transition-all hover:-translate-y-1 ${glassClass}`}>
+        {/* Cycle Card */}
+        <div 
+          className="rounded-3xl p-5 shadow-sm transition-all hover:-translate-y-1 border backdrop-blur-md"
+          style={glassStyle}
+        >
           <div className="w-10 h-10 mb-3 bg-linear-to-br from-pink-400 to-pink-500 rounded-xl flex items-center justify-center shadow-md shadow-pink-200">
             <TrendingUp className="w-5 h-5 text-white" />
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider opacity-40 mb-1 dark:text-gray-300">Cycles</p>
-            <p className="text-2xl font-bold opacity-90 dark:text-white">{cycleData.length}</p>
-            <p className="text-[10px] opacity-40 mt-1 dark:text-gray-400">Logged cycles</p>
+            <p className="text-xs font-semibold uppercase tracking-wider opacity-40 mb-1" style={{ color: 'var(--foreground)' }}>Cycles</p>
+            <p className="text-2xl font-bold opacity-90" style={{ color: 'var(--foreground)' }}>{cycleData.length}</p>
+            <p className="text-[10px] opacity-40 mt-1" style={{ color: 'var(--foreground)' }}>Logged cycles</p>
           </div>
         </div>
 
         {/* Mood Card */}
-        <div className={`rounded-3xl p-5 shadow-sm transition-all hover:-translate-y-1 ${glassClass}`}>
+        {/* Mood Card */}
+        <div 
+          className="rounded-3xl p-5 shadow-sm transition-all hover:-translate-y-1 border backdrop-blur-md"
+          style={glassStyle}
+        >
           <div className="w-10 h-10 mb-3 bg-linear-to-br from-blue-400 to-blue-500 rounded-xl flex items-center justify-center shadow-md shadow-blue-200">
             <Brain className="w-5 h-5 text-white" />
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider opacity-40 mb-1 dark:text-gray-300">Avg Mood</p>
-            <p className="text-2xl font-bold opacity-90 dark:text-white">{avgMood}<span className="text-sm opacity-50">/5</span></p>
-            <p className="text-[10px] opacity-40 mt-1 dark:text-gray-400">
+            <p className="text-xs font-semibold uppercase tracking-wider opacity-40 mb-1" style={{ color: 'var(--foreground)' }}>Avg Mood</p>
+            <p className="text-2xl font-bold opacity-90" style={{ color: 'var(--foreground)' }}>{avgMood}<span className="text-sm opacity-50">/5</span></p>
+            <p className="text-[10px] opacity-40 mt-1" style={{ color: 'var(--foreground)' }}>
               {avgMood >= 4 ? '😊 Doing great' : avgMood >= 3 ? '😐 Balanced' : '😔 Rough patch'}
             </p>
           </div>
         </div>
 
         {/* Logs Total */}
-        <div className={`rounded-3xl p-5 shadow-sm transition-all hover:-translate-y-1 ${glassClass}`}>
+        {/* Logs Total */}
+        <div 
+          className="rounded-3xl p-5 shadow-sm transition-all hover:-translate-y-1 border backdrop-blur-md"
+          style={glassStyle}
+        >
           <div className="w-10 h-10 mb-3 bg-linear-to-br from-green-400 to-green-500 rounded-xl flex items-center justify-center shadow-md shadow-green-200">
             <Activity className="w-5 h-5 text-white" />
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider opacity-40 mb-1 dark:text-gray-300">Entry Log</p>
-            <p className="text-2xl font-bold opacity-90 dark:text-white">{logs.length}</p>
-            <p className="text-[10px] opacity-40 mt-1 dark:text-gray-400">Days tracked</p>
+            <p className="text-xs font-semibold uppercase tracking-wider opacity-40 mb-1" style={{ color: 'var(--foreground)' }}>Entry Log</p>
+            <p className="text-2xl font-bold opacity-90" style={{ color: 'var(--foreground)' }}>{logs.length}</p>
+            <p className="text-[10px] opacity-40 mt-1" style={{ color: 'var(--foreground)' }}>Days tracked</p>
           </div>
         </div>
 
         {/* Heart/Health */}
-        <div className={`rounded-3xl p-5 shadow-sm transition-all hover:-translate-y-1 ${glassClass}`}>
+        {/* Heart/Health */}
+        <div 
+          className="rounded-3xl p-5 shadow-sm transition-all hover:-translate-y-1 border backdrop-blur-md"
+          style={glassStyle}
+        >
           <div className="w-10 h-10 mb-3 bg-linear-to-br from-purple-400 to-purple-500 rounded-xl flex items-center justify-center shadow-md shadow-purple-200">
             <Heart className="w-5 h-5 text-white" />
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider opacity-40 mb-1 dark:text-gray-300">Status</p>
-            <p className="text-lg font-bold opacity-90 dark:text-white">Tracking</p>
-            <p className="text-[10px] opacity-40 mt-1 dark:text-gray-400">Keep it up!</p>
+            <p className="text-xs font-semibold uppercase tracking-wider opacity-40 mb-1" style={{ color: 'var(--foreground)' }}>Status</p>
+            <p className="text-lg font-bold opacity-90" style={{ color: 'var(--foreground)' }}>Tracking</p>
+            <p className="text-[10px] opacity-40 mt-1" style={{ color: 'var(--foreground)' }}>Keep it up!</p>
           </div>
         </div>
       </div>
@@ -164,15 +182,15 @@ export function InsightsView() {
 
       {/* 1. Cycle Length Chart */}
       {cycleData.length > 0 ? (
-        <div className={`rounded-4xl p-6 shadow-sm ${glassClass}`}>
-          <h3 className="text-lg font-bold opacity-90 mb-6 dark:text-white">Cycle Length History</h3>
+        <div className="rounded-4xl p-6 shadow-sm border" style={glassStyle}>
+          <h3 className="text-lg font-bold opacity-90 mb-6" style={{ color: 'var(--foreground)' }}>Cycle Length History</h3>
           <ResponsiveContainer width="100%" height={250}>
             <LineChart data={cycleData}>
-              <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
-              <XAxis dataKey="month" stroke={axisColor} fontSize={12} tickLine={false} axisLine={false} />
-              <YAxis stroke={axisColor} domain={[20, 40]} fontSize={12} tickLine={false} axisLine={false} />
+              <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.1} vertical={false} />
+              <XAxis dataKey="month" strokeOpacity={0.6} fontSize={12} tickLine={false} axisLine={false} />
+              <YAxis strokeOpacity={0.6} domain={[20, 40]} fontSize={12} tickLine={false} axisLine={false} />
               <Tooltip
-                contentStyle={{ backgroundColor: tooltipBg, borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
+                contentStyle={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
                 itemStyle={{ color: '#ec4899', fontWeight: 'bold' }}
               />
               <Line type="monotone" dataKey="days" stroke="#ec4899" strokeWidth={4} dot={{ fill: '#ec4899', r: 4, strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6 }} />
@@ -185,14 +203,15 @@ export function InsightsView() {
 
         {/* 2. Symptoms Chart */}
         {/* 2. Symptoms Chart */}
-        <div className={`rounded-4xl p-6 shadow-sm ${glassClass}`}>
-          <h3 className="text-lg font-bold opacity-90 mb-6 dark:text-white">Top Symptoms</h3>
+        {/* 2. Symptoms Chart */}
+        <div className="rounded-4xl p-6 shadow-sm border" style={glassStyle}>
+          <h3 className="text-lg font-bold opacity-90 mb-6" style={{ color: 'var(--foreground)' }}>Top Symptoms</h3>
           {symptomData.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={symptomData}>
-                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
-                <XAxis dataKey="name" stroke={axisColor} fontSize={11} interval={0} height={50} tickLine={false} axisLine={false} />
-                <Tooltip cursor={{ fill: isDark ? '#374151' : '#f3f4f6' }} contentStyle={{ backgroundColor: tooltipBg, borderRadius: '12px', border: 'none' }} />
+                <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.1} vertical={false} />
+                <XAxis dataKey="name" strokeOpacity={0.6} fontSize={11} interval={0} height={50} tickLine={false} axisLine={false} />
+                <Tooltip cursor={{ fill: 'var(--secondary)' }} contentStyle={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)', borderRadius: '12px' }} />
                 <Bar dataKey="count" fill="#a855f7" radius={[6, 6, 6, 6]} barSize={20} />
               </BarChart>
             </ResponsiveContainer>
@@ -203,15 +222,16 @@ export function InsightsView() {
 
         {/* 3. Mood Chart */}
         {/* 3. Mood Chart */}
-        <div className={`rounded-4xl p-6 shadow-sm ${glassClass}`}>
-          <h3 className="text-lg font-bold opacity-90 mb-6 dark:text-white">Mood Trends</h3>
+        {/* 3. Mood Chart */}
+        <div className="rounded-4xl p-6 shadow-sm border" style={glassStyle}>
+          <h3 className="text-lg font-bold opacity-90 mb-6" style={{ color: 'var(--foreground)' }}>Mood Trends</h3>
           {moodData.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={moodData}>
-                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.1} vertical={false} />
                 <XAxis dataKey="day" hide />
-                <YAxis stroke={axisColor} domain={[1, 5]} ticks={[1, 2, 3, 4, 5]} fontSize={11} tickLine={false} axisLine={false} />
-                <Tooltip contentStyle={{ backgroundColor: tooltipBg, borderRadius: '12px', border: 'none' }} />
+                <YAxis strokeOpacity={0.6} domain={[1, 5]} ticks={[1, 2, 3, 4, 5]} fontSize={11} tickLine={false} axisLine={false} />
+                <Tooltip contentStyle={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--card-border)', borderRadius: '12px' }} />
                 <Line type="basis" dataKey="mood" stroke="#3b82f6" strokeWidth={4} dot={false} activeDot={{ r: 6, fill: '#3b82f6', stroke: '#fff', strokeWidth: 2 }} />
               </LineChart>
             </ResponsiveContainer>
