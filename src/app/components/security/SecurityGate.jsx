@@ -1,51 +1,38 @@
-import { Shield, Lock, Fingerprint } from 'lucide-react';
+import { PinPad } from './PinPad';
 import { useSecurity } from '../../context/SecurityContext';
 import { useTheme } from '../../context/ThemeContext';
 
 export function SecurityGate({ children }) {
-  const { isLocked, unlockApp, isSupported } = useSecurity();
+  const { isLocked, isPinEnabled } = useSecurity();
   const { currentTheme } = useTheme();
 
-  const gradient = currentTheme?.colors?.gradient || 'from-pink-400 to-purple-400';
-
+  // If not locked, or locked but NO PIN set (shouldn't happen with new logic, but safety first), render children
   if (!isLocked) {
     return <>{children}</>;
   }
 
+  // If locked but pin not enabled (legacy state), maybe show setup or just unlock? 
+  // For now, assume if locked, we want PIN. If no PIN is set but locked, show unlock button (legacy fallback)
+  
   return (
-    <div className="fixed inset-0 z-1000 bg-white dark:bg-zinc-950 flex flex-col items-center justify-center p-6 text-center">
-      {/* Subtle Background Glow */}
-      <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-linear-to-br ${gradient} rounded-full blur-[100px] opacity-20 pointer-events-none`} />
-
-      <div className="relative z-10 flex flex-col items-center animate-in fade-in zoom-in-95 duration-700">
-        
-        {/* Minimal Icon */}
-        <div className="mb-8">
-            <Lock strokeWidth={1.5} className="w-12 h-12 opacity-50 dark:text-white text-gray-800" />
-        </div>
-
-        {/* Minimal Text */}
-        <div className="space-y-3 mb-12">
-          <h1 className="text-3xl font-light tracking-tight dark:text-white text-gray-900">
-            Selene
-          </h1>
-          <p className="text-sm tracking-wide uppercase text-gray-400 font-medium">
-            Locked
-          </p>
-        </div>
-
-        {/* Minimal Button */}
-        <button
-          onClick={unlockApp}
-          className="group relative px-8 py-3 rounded-full overflow-hidden transition-all active:scale-95"
-        >
-          <div className={`absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity bg-linear-to-r ${gradient}`} />
-          <div className="relative flex items-center gap-2 text-sm font-medium dark:text-white text-gray-900">
-            <Fingerprint className="w-5 h-5 opacity-70" />
-            <span>Tap to Unlock</span>
-          </div>
-        </button>
-      </div>
+    <div className="fixed inset-0 z-9999 bg-white dark:bg-zinc-950 flex flex-col items-center justify-center p-6 select-none">
+        {/* Absolutely ZERO glow or effects as requested */}
+        {isPinEnabled ? (
+            <div className="w-full">
+                <div className="text-center mb-4">
+                    <div className="w-12 h-12 rounded-xl bg-gray-900 text-white flex items-center justify-center mx-auto mb-4 font-bold text-xl">
+                        S
+                    </div>
+                </div>
+                <PinPad />
+            </div>
+        ) : (
+             /* Fallback for "Soft Lock" without PIN (should rarely see this now) */
+             <div className="text-center">
+                 <h1 className="text-xl font-medium mb-4">Locked</h1>
+                 <button onClick={() => window.location.reload()} className="text-blue-500">Refresh</button>
+             </div>
+        )}
     </div>
   );
 }

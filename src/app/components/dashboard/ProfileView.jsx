@@ -72,24 +72,32 @@ export function ProfileView() {
       {/* 1. Modern Header Profile Card */}
       <div className="relative pt-4 flex flex-col items-center text-center">
         {/* Avatar with Gradient Ring */}
-        <div className="relative mb-4 group">
-          <div className="absolute -inset-1 rounded-full blur opacity-40 group-hover:opacity-75 transition duration-500"
-            style={{ background: `linear-gradient(to right, ${colors.primary}, ${colors.accent || '#a855f7'})` }}>
-          </div>
-          <div className="relative w-32 h-32 rounded-full p-1 bg-white dark:bg-black/20">
-            <div className="w-full h-full rounded-full overflow-hidden relative flex items-center justify-center bg-gray-50 dark:bg-white/5">
-              {profile?.avatar_url ? (
-                <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
-              ) : (
-                <span
-                  className="text-4xl font-bold bg-clip-text text-transparent"
-                  style={{ backgroundImage: `linear-gradient(to right, ${colors.primary}, ${colors.accent || '#a855f7'})` }}
-                >
-                  {profile?.full_name ? profile.full_name.substring(0, 2).toUpperCase() : 'ME'}
-                </span>
-              )}
+        <div className="space-y-6">
+            {/* Header Card - Fixed Colors */}
+            <div className={`p-6 rounded-3xl relative overflow-hidden bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 shadow-sm`}>
+                <div className="relative z-10 flex flex-col items-center">
+                    <div className="relative mb-4 group">
+                        <div className={`w-24 h-24 rounded-full p-1 bg-linear-to-br ${currentTheme.colors.gradient}`}>
+                            <div className="w-full h-full rounded-full border-4 border-white dark:border-zinc-900 overflow-hidden bg-white">
+                                {profile?.avatar_url ? (
+                                    /* Fix Avatar Load Time by using standard img tag with lazy loading off (eager) */
+                                    <img 
+                                        src={profile.avatar_url} 
+                                        alt="Profile" 
+                                        className="w-full h-full object-cover"
+                                        loading="eager"
+                                        decoding="sync"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center bg-gray-50 text-gray-300">
+                                        <User className="w-8 h-8" />
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
 
         {/* Name & Email */}

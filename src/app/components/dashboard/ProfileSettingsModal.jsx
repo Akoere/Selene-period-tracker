@@ -4,11 +4,18 @@ import { supabase } from '@/lib/supabase';
 import { updateProfile, uploadAvatar } from '@/lib/api';
 import { useTheme } from '../../context/ThemeContext';
 import { useSecurity } from '../../context/SecurityContext';
+import { PinPad } from '../security/PinPad'; // Import PinPad
 
-export function ProfileSettingsModal({ isOpen, onClose, activeTab, initialData, onUpdate }) {
+export function ProfileSettingsModal({ isOpen, onClose, profile, setProfile, onUpdateProfile }) {
     const [loading, setLoading] = useState(false);
     const { currentTheme } = useTheme();
-    const { biometricsEnabled, toggleBiometrics, notificationsEnabled, toggleNotifications, privacyMode, togglePrivacyMode, isSupported } = useSecurity();
+    const { 
+        isPinEnabled, setAppPin, disablePin, // New PIN stuff
+        notificationsEnabled, toggleNotifications,
+        privacyMode, togglePrivacyMode
+    } = useSecurity();
+
+    const [showPinSetup, setShowPinSetup] = useState(false); // Local state for overlay
 
     // Form State
     const [fullName, setFullName] = useState('');
@@ -243,25 +250,75 @@ export function ProfileSettingsModal({ isOpen, onClose, activeTab, initialData, 
                                 </button>
                             </div>
 
-                            <div className="flex items-center justify-between p-4 rounded-xl border" style={{ borderColor: 'var(--card-border)' }}>
+                            <div className="flex items-center justify-between p-4 rounded-2xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10">
                                 <div className="flex items-center gap-3">
-                                    <div className={`w-10 h-10 rounded-full flex items-center justify-center`} style={{ backgroundColor: `${primaryColor}15` }}>
-                                        <EyeOff className="w-5 h-5" style={{ color: primaryColor }} />
+                                    <div className="p-2.5 rounded-xl bg-gray-200 dark:bg-gray-700">
+                                        <Lock className="w-5 h-5" />
                                     </div>
                                     <div>
-                                        <p className="font-medium">Privacy Mode</p>
-                                        <p className="text-xs opacity-50">Blur personal info (Age, Email) in public</p>
+                                        <h3 className="font-medium">App Lock</h3>
+                                        <p className="text-sm opacity-60">Secure with PIN Code</p>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => {
+                                        if (isPinEnabled) {
+                                            if (confirm("Disable App Lock?")) disablePin();
+                                        } else {
+                                            setShowPinSetup(true);
+                                        }
+                                    }}
+                                    className={`relative w-12 h-7 rounded-full transition-colors duration-200 ${
+                                        isPinEnabled ? 'bg-pink-500' : 'bg-gray-200 dark:bg-gray-700'
+                                    }`}
+                                >
+                                    <div className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${
+                                        isPinEnabled ? 'translate-x-5' : 'translate-x-0'
+                                    }`} />
+                                </button>
+                            </div>
+
+                            {/* Privacy Mode Toggle */}
+                            <div className="flex items-center justify-between p-4 rounded-2xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2.5 rounded-xl bg-gray-200 dark:bg-gray-700">
+                                        <EyeOff className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-medium">Privacy Mode</h3>
+                                        <p className="text-sm opacity-60">Hide sensitive numbers</p>
                                     </div>
                                 </div>
                                 <button
                                     onClick={() => togglePrivacyMode(!privacyMode)}
-                                    className={`w-11 h-6 rounded-full transition-colors relative ${privacyMode ? 'opacity-100' : 'bg-gray-200 dark:bg-gray-700'}`}
-                                    style={{ backgroundColor: privacyMode ? primaryColor : undefined }}
+                                    className={`relative w-12 h-7 rounded-full transition-colors duration-200 ${
+                                        privacyMode ? 'bg-pink-500' : 'bg-gray-200 dark:bg-gray-700'
+                                    }`}
                                 >
-                                    <div className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${privacyMode ? 'translate-x-5' : 'translate-x-0'}`} />
+                                    <div className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${
+                                        privacyMode ? 'translate-x-5' : 'translate-x-0'
+                                    }`} />
                                 </button>
                             </div>
 
+
+                {/* PIN Setup Overlay */}
+                {showPinSetup && (
+                    <div className="absolute inset-0 z-50 bg-white dark:bg-zinc-900 flex flex-col">
+                        <div className="p-4">
+                            <button onClick={() => setShowPinSetup(false)} className="text-sm">Cancel</button>
+                        </div>
+                        <div className="flex-1 flex items-center justify-center">
+                            <PinPad 
+                                isSettingUp={true} 
+                                onPinSet={(pin) => {
+                                    setAppPin(pin);
+                                    setShowPinSetup(false);
+                                }} 
+                            />
+                        </div>
+                    </div>
+                )}
                             <div className="pt-6 border-t md:pt-4" style={{ borderColor: 'var(--card-border)' }}>
                                 <h3 className="text-sm font-bold text-red-500 mb-3 uppercase tracking-wider">Danger Zone</h3>
                                 <div className="flex items-center justify-between p-4 rounded-xl border border-red-200 bg-red-50 dark:bg-red-900/10">
