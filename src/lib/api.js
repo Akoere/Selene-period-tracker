@@ -115,26 +115,7 @@ export async function uploadAvatar(file) {
       .getPublicUrl(filePath);
 
     return { publicUrl, error: null };
-    return { publicUrl, error: null };
   } catch (error) {
     return { publicUrl: null, error };
   }
-}
-
-// --- SUPPORT FUNCTIONS ---
-
-export async function createSupportTicket(ticketData) {
-  // ticketData: { name, email, message, user_id (optional) }
-  const { data, error } = await supabase
-    .from('support_tickets')
-    .insert([
-      { 
-        ...ticketData,
-        status: 'open',
-        created_at: new Date().toISOString()
-      }
-    ])
-    .select();
-
-  return { data, error };
 }

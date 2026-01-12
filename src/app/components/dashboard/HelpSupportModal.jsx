@@ -27,14 +27,13 @@ export function HelpSupportModal({ isOpen, onClose }) {
 
         try {
             // 1. Save to Supabase (Database)
-            // We dynamically import to check for user ID if available
             const { data: { user } } = await import('@/lib/supabase').then(m => m.supabase.auth.getUser());
             
             const ticketData = {
                 name: formData.name,
                 email: formData.email,
                 message: formData.message,
-                user_id: user ? user.id : null // Optional
+                user_id: user ? user.id : null
             };
 
             const { createSupportTicket } = await import('@/lib/api');
@@ -45,12 +44,20 @@ export function HelpSupportModal({ isOpen, onClose }) {
                 throw new Error("Failed to save message to database.");
             }
 
-            // 2. TODO: Send Email Confirmation
-            // (Pending user decision on EmailJS vs Supabase Edge Functions)
-            
+            // 2. Call Edge Function (Supabase)
+            try {
+                const { error: fnError } = await import('@/lib/supabase').then(m => 
+                    m.supabase.functions.invoke('send-support-email', {
+                        body: ticketData
+                    })
+                );
+                if (fnError) console.warn("Email Function Error:", fnError);
+            } catch (fnErr) {
+                 console.warn("Failed to invoke edge function", fnErr);
+            }
+
             setSuccess(true);
             setFormData({ name: '', email: '', message: '' });
-
         } catch (err) {
             console.error(err);
             setError("Error sending message. Please try again.");

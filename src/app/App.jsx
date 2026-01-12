@@ -6,10 +6,10 @@ import { getProfile } from '@/lib/api';
 // --- IMPORTS ---
 import { ThemeProvider } from './context/ThemeContext';
 import { OnboardingFlow } from './components/OnboardingFlow';
-import { AuthPage } from './components/AuthPage'; // <--- CHANGED THIS NAME
+import { AuthPage } from './components/AuthPage'; 
 import { AppLayout } from './components/layout/AppLayout';
 
-import { AIAssistant } from './components/ai/AIAssistant';
+import { AIAssistant } from './components/AI/AIassistant';
 import { SecurityProvider } from './context/SecurityContext';
 
 import { SecurityGate } from './components/security/SecurityGate';
