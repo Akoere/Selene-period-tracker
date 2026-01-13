@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Sidebar } from './Sidebar';
 import { BottomNav } from './BottomNav';
 import { PWAPrompt } from './PWAPrompt'; // Import correctly at the top
+import { MobileInstallBanner } from './MobileInstallBanner';
 
 export function AppLayout({ children }) {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -40,6 +41,7 @@ export function AppLayout({ children }) {
 
       {/* PWA Install Prompt */}
       <PWAPrompt />
+      <MobileInstallBanner />
       
     </div>
   );
