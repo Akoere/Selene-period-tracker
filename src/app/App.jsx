@@ -26,35 +26,60 @@ export default function App() {
   const [onboardingComplete, setOnboardingComplete] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  // Helper: Check if user is legally onboarded
+  const checkUserOnboarding = async (user) => {
+    if (!user) {
+       setOnboardingComplete(false);
+       return;
+    }
+
+    // 1. Check LocalStorage Backup (Fastest)
+    const localOnboarded = localStorage.getItem(`selene_onboarded_${user.id}`);
+    if (localOnboarded === 'true') {
+        setOnboardingComplete(true);
+        return; 
+    }
+
+    try {
+        // 2. Check Database
+        const { data: profile } = await getProfile(user.id);
+        
+        // Valid if: Profile exists AND (flag is true OR cycle data exists)
+        const hasProfileData = profile && (profile.is_onboarded || profile.cycle_length > 0);
+        
+        if (hasProfileData) {
+            setOnboardingComplete(true);
+            localStorage.setItem(`selene_onboarded_${user.id}`, 'true');
+        } else {
+             setOnboardingComplete(false);
+        }
+    } catch (e) {
+        console.error("Onboarding check failed", e);
+    }
+  };
+
   useEffect(() => {
     async function initApp() {
-      const { data: { session } } = await supabase.auth.getSession();
-      setSession(session);
-
-      if (session) {
-        const { data: profile } = await getProfile(session.user.id);
-        
-        // Check LocalStorage Backup
-        const localOnboarded = localStorage.getItem(`selene_onboarded_${session.user.id}`);
-
-        // Fix: Check if profile has cycle data OR explicit onboarding flag OR LocalStorage backup
-        if ((profile && profile.is_onboarded) || localOnboarded === 'true') {
-          setOnboardingComplete(true);
-          
-          // Sync LocalStorage if missing but profile says yes
-          if (!localOnboarded && profile?.is_onboarded) {
-             localStorage.setItem(`selene_onboarded_${session.user.id}`, 'true');
-          }
-        }
+      const { data: { session: initialSession } } = await supabase.auth.getSession();
+      setSession(initialSession);
+      if (initialSession?.user) {
+         await checkUserOnboarding(initialSession.user);
       }
       setLoading(false);
     }
 
     initApp();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      if (!session) setOnboardingComplete(false);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
+      setSession(currentSession);
+      
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+         if (currentSession?.user) {
+            await checkUserOnboarding(currentSession.user);
+         }
+      } else if (event === 'SIGNED_OUT') {
+         setOnboardingComplete(false);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -81,7 +106,7 @@ export default function App() {
       ) : (
         <SecurityProvider>
             <SecurityGate>
-              <DataProvider> {/* <-- ADDED PROVIDER */}
+              <DataProvider initialSession={session}> {/* <-- CHANGED: Pass Session */}
                 <Router>
                     <AppLayout>
                     <Routes>

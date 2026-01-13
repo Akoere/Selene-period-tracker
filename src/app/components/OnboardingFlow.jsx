@@ -78,8 +78,8 @@ export function OnboardingFlow({ onComplete }) {
   // Validation Logic
   const isStepValid = () => {
     if (currentStep === 3) { // Cycle Info Step
-      // Must have a date selected
-      return formData.lastPeriodDate && formData.lastPeriodDate !== '';
+      // Must have a date selected and it must be valid
+      return Boolean(formData.lastPeriodDate && formData.lastPeriodDate !== '');
     }
     return true;
   };

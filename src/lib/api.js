@@ -9,14 +9,19 @@ export async function getProfile(userId) {
     .eq('id', userId)
     .single();
   
+  // PGRST116 = JSON object requested, multiple (or no) rows returned
+  if (error && error.code === 'PGRST116') {
+    return { data: null, error: null };
+  }
+  
   return { data, error };
 }
 
 export async function updateProfile(userId, updates) {
   const { data, error } = await supabase
     .from('profiles')
-    .update(updates)
-    .eq('id', userId);
+    .upsert({ id: userId, ...updates })
+    .select();
   
   return { data, error };
 }

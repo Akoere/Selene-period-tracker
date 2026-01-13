@@ -5,10 +5,23 @@ import { useTheme } from '../../context/ThemeContext';
 
 export function MobileInstallBanner() {
   const { isInstallable, isIOS, promptInstall } = useInstallPrompt();
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false); // Default to false to avoid flash
   const { currentTheme } = useTheme();
   
   const gradient = currentTheme?.colors?.gradient || 'from-pink-400 to-purple-400';
+
+  useEffect(() => {
+    const lastDismissed = localStorage.getItem('pwa_prompt_dismissed');
+    // If NOT dismissed or older than 24h, show it
+    if (!lastDismissed || Date.now() - parseInt(lastDismissed) > 86400000) {
+      setIsVisible(true);
+    }
+  }, []);
+
+  const handleDismiss = () => {
+    setIsVisible(false);
+    localStorage.setItem('pwa_prompt_dismissed', Date.now().toString());
+  };
 
   // Only show if installable OR iOS (and user hasn't dismissed it)
   if (!isVisible || (!isInstallable && !isIOS)) return null;
@@ -35,7 +48,7 @@ export function MobileInstallBanner() {
             )}
           </div>
           
-          <button onClick={() => setIsVisible(false)} className="p-1 opacity-40 hover:opacity-100">
+          <button onClick={handleDismiss} className="p-1 opacity-40 hover:opacity-100">
             <X className="w-4 h-4" />
           </button>
         </div>

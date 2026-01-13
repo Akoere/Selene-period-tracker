@@ -8,17 +8,28 @@ export function useData() {
   return useContext(DataContext);
 }
 
-export function DataProvider({ children }) {
+export function DataProvider({ children, initialSession }) {
   const [profile, setProfile] = useState(null);
-  const [recentLogs, setRecentLogs] = useState([]); // Last 90 days for dashboard
-  const [allLogs, setAllLogs] = useState([]); // For insights
+  const [recentLogs, setRecentLogs] = useState([]); 
+  const [allLogs, setAllLogs] = useState([]); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   // Helper to refresh data
   const refreshData = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      setLoading(true);
+      
+      // Use passed session if available (first load), otherwise get current
+      let user = initialSession?.user;
+      
+      if (!user) {
+         const { data } = await supabase.auth.getUser();
+         user = data.user;
+      }
+
+      console.log("DataContext: Fetching for user:", user?.id);
+
       if (!user) {
         setLoading(false);
         return;
@@ -30,17 +41,38 @@ export function DataProvider({ children }) {
         getRecentLogs(user.id, 90)
       ]);
 
-      if (profileRes.error) throw profileRes.error;
+      let profileData = profileRes.data;
+
+      // Emergency Fix: If profile missing, create it on the fly
+      if (!profileData || profileRes.error) {
+         console.warn("Profile missing, creating default...");
+         const { data: newProfile, error: createError } = await supabase
+            .from('profiles')
+            .upsert({ 
+                id: user.id, 
+                email: user.email,
+                full_name: user.user_metadata?.full_name || 'Selene User'
+            })
+            .select() // Fix: .select() is key for returning data
+            .single();
+         
+         if (!createError) profileData = newProfile;
+         else console.error("Profile creation failed:", createError);
+      }
+
+      // Final Check: Ensure we have meaningful data
+      const finalProfile = {
+        ...profileData,
+        email: profileData?.email || user.email,
+        full_name: profileData?.full_name || user.user_metadata?.full_name || 'Selene User'
+      };
+
+      console.log("DataContext: Profile Set:", finalProfile);
+      setProfile(finalProfile);
       
-      // Merge Auth Email with Profile Data (Fallback if DB is empty)
-      setProfile({
-        ...profileRes.data,
-        email: profileRes.data?.email || user.email 
-      });
+      if (recentLogsRes.error) console.error("Logs fetch error:", recentLogsRes.error);
       setRecentLogs(recentLogsRes.data || []);
-      setRecentLogs(recentLogsRes.data || []);
-      // setAllLogs(allLogsRes.data || []); -- Loaded lazily elsewhere now
-      
+
     } catch (err) {
       console.error("Error fetching data:", err);
       setError(err);

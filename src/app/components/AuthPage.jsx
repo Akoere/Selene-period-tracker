@@ -2,11 +2,25 @@ import { useState } from 'react';
 import { Mail, Lock as LockIcon, Eye, EyeOff, ArrowRight, User, Loader2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import logoImage from '@/assets/selene-logo.png'; 
+import { useTheme } from '../context/ThemeContext'; // Import Theme Context
 
 export function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const { currentTheme } = useTheme(); // Consume Theme
+
+  // Theme Helpers
+  const bgStyle = { backgroundColor: currentTheme.colors.background };
+  const cardStyle = { backgroundColor: currentTheme.colors.card, borderColor: currentTheme.colors.cardBorder };
+  const textStyle = { color: currentTheme.colors.foreground };
+  const inputStyle = { 
+    backgroundColor: currentTheme.id === 'dark' ? '#334155' : '#f9fafb',
+    color: currentTheme.colors.foreground,
+    borderColor: currentTheme.colors.cardBorder 
+  };
+  
+  // From here... logic is same
   
   // Form Fields
   const [email, setEmail] = useState('');
@@ -15,101 +29,63 @@ export function AuthPage() {
   const [name, setName] = useState('');
   const [errors, setErrors] = useState({});
 
-  // 1. Validation Logic
+  // ... (Validation & Submit Logic unchanged) ...
+  // ...
+
   const validateForm = () => {
+    // ... (logic) ...
     const newErrors = {};
+    if (!email) newErrors.email = 'Email is required';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) newErrors.email = 'Valid email required';
+    
+    if (!password) newErrors.password = 'Password is required';
+    else if (password.length < 6) newErrors.password = 'Min 6 chars';
 
-    // Email
-    if (!email) {
-      newErrors.email = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = 'Please enter a valid email';
-    }
-
-    // Password
-    if (!password) {
-      newErrors.password = 'Password is required';
-    } else if (password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
-    }
-
-    // Signup Specifics
     if (!isLogin) {
       if (!name) newErrors.name = 'Name is required';
-      if (password !== confirmPassword) {
-        newErrors.confirmPassword = 'Passwords do not match';
-      }
+      if (password !== confirmPassword) newErrors.confirmPassword = 'Passwords mismatch';
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  // 2. Real Authentication Logic
   const handleSubmit = async (e) => {
+    // ... (existing submit logic) ...
     e.preventDefault();
     if (!validateForm()) return;
-
     setIsLoading(true);
     setErrors({});
-
     try {
       if (isLogin) {
-        // --- LOG IN ---
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       } else {
-        // --- SIGN UP ---
         const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: { full_name: name },
-            emailRedirectTo: window.location.origin,
-          },
+          email, password,
+          options: { data: { full_name: name }, emailRedirectTo: window.location.origin },
         });
         if (error) throw error;
-        alert('Account created! You can now log in.');
+        alert('Account created! Please check your email.');
         setIsLogin(true);
       }
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
-    } finally {
-      setIsLoading(false);
-    }
+    } catch (error) { alert(error.message); } 
+    finally { setIsLoading(false); }
   };
 
   const handleGoogleLogin = async () => {
-    try {
-      setIsLoading(true);
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          // "Smart" Redirect: Uses Vercel URL on live site, Localhost on dev
-          redirectTo: window.location.origin,
-          
-          // ADDED: Forces the Google consent screen to show every time
-          // This helps avoid "sticky" session issues on mobile
-          queryParams: {
-            access_type: 'offline',
-            prompt: 'consent',
-          },
-        }
-      });
-      if (error) throw error;
-    } catch (error) {
-      alert(error.message);
-    } finally {
-      setIsLoading(false);
-    }
+      // ... (existing google logic) ...
+       try {
+        setIsLoading(true);
+        const { error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: { redirectTo: window.location.origin, queryParams: { access_type: 'offline', prompt: 'consent' } }
+        });
+        if (error) throw error;
+       } catch (e) { alert(e.message); } finally { setIsLoading(false); }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 overflow-auto">
+    <div className="min-h-screen flex items-center justify-center p-4 overflow-auto transition-colors duration-300" style={bgStyle}>
       <div className="w-full max-w-md">
         
         {/* Logo & Welcome */}
@@ -117,19 +93,20 @@ export function AuthPage() {
           <div className="w-20 h-20 bg-linear-to-br from-pink-400 to-purple-400 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg p-4">
              <img src={logoImage} alt="Logo" className="w-full h-full object-contain" />
           </div>
-          <h1 className="text-4xl font-semibold bg-linear-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent mb-2">
+          <h1 className="text-4xl font-semibold mb-2 bg-clip-text text-transparent bg-linear-to-r" style={{ backgroundImage: `linear-gradient(to right, ${currentTheme.colors.primary}, #ec4899)` }}>
             Welcome to Selene
           </h1>
-          <p className="text-gray-600">
+          <p style={{ color: currentTheme.colors.foreground }} className="opacity-80">
             {isLogin ? 'Track your cycle with confidence' : 'Start your wellness journey'}
           </p>
         </div>
 
         {/* Auth Card */}
-        <div className="bg-white rounded-3xl shadow-xl p-8 mb-6 border border-gray-100">
+        <div className="rounded-3xl shadow-xl p-8 mb-6 border transition-colors duration-300" style={cardStyle}>
           
-          {/* Toggle Tabs */}
-          <div className="flex gap-2 mb-8 bg-gray-100 rounded-xl p-1">
+          {/* Toggle Tabs - Simplified styles for context compat */}
+          <div className="flex gap-2 mb-8 rounded-xl p-1" style={{ backgroundColor: currentTheme.id === 'dark' ? '#334155' : '#f3f4f6' }}>
+
             <button
               onClick={() => setIsLogin(true)}
               className={`flex-1 py-2.5 rounded-lg font-medium transition-all ${
