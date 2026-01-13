@@ -19,14 +19,14 @@ export function ThemeSettings() {
             key={theme.id}
             onClick={() => setTheme(theme.id)}
             style={{
-              borderColor: isSelected ? primaryColor : '#f3f4f6', // Use real color or gray-100
-              backgroundColor: isSelected ? `${primaryColor}10` : 'transparent', // 10% opacity for bg
+              borderColor: isSelected ? primaryColor : '#f3f4f6', 
+              backgroundColor: isSelected ? `${primaryColor}10` : 'transparent',
             }}
             className="relative flex flex-col items-center gap-2 p-3 rounded-2xl border-2 transition-all hover:bg-gray-50"
           >
-            {/* Color Circle Preview - Uses the gradient from context directly */}
+            {/* Color Circle Preview - Uses v4 linear syntax */}
             <div 
-              className={`w-10 h-10 rounded-full shadow-sm ring-2 ring-white bg-gradient-to-br ${theme.colors.gradient}`}
+              className={`w-10 h-10 rounded-full shadow-sm ring-2 ring-white bg-linear-to-br ${theme.colors.gradient}`}
             />
             
             <span className={`text-xs font-medium ${isSelected ? 'text-gray-900' : 'text-gray-500'}`}>

@@ -22,7 +22,6 @@ export function Sidebar({ isCollapsed, toggleSidebar }) {
 
   return (
     <div 
-      // REMOVED 'border-r'
       className={`hidden md:flex h-screen bg-(--card-bg) flex-col fixed left-0 top-0 transition-all duration-300 z-50 shadow-xl ${
         isCollapsed ? 'w-20' : 'w-64'
       }`}
@@ -106,6 +105,7 @@ export function Sidebar({ isCollapsed, toggleSidebar }) {
 // Separate component to keep Sidebar clean
 function InstallButton({ isCollapsed }) {
   const { isInstallable, isIOS, promptInstall } = useInstallPrompt();
+  // eslint-disable-next-line no-unused-vars
   const [showIOSHint, setShowIOSHint] = useState(false);
 
   if (!isInstallable && !isIOS) return null;
@@ -137,4 +137,3 @@ function InstallButton({ isCollapsed }) {
     </div>
   );
 }
-

@@ -69,7 +69,6 @@ export async function getRecentLogs(userId, limit = 90) {
   return { data, error };
 }
 
-// --- ADD THIS MISSING FUNCTION TO FIX THE ERROR ---
 export async function getAllLogs(userId) {
   const { data, error } = await supabase
     .from('daily_logs')
@@ -119,7 +118,6 @@ export async function uploadAvatar(file) {
       .from('avatars')
       .getPublicUrl(filePath);
 
-    return { publicUrl, error: null };
     return { publicUrl, error: null };
   } catch (error) {
     return { publicUrl: null, error };

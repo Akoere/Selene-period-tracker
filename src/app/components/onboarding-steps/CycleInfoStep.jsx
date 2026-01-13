@@ -4,10 +4,10 @@ export function CycleInfoStep({ data, update }) {
   return (
     <div className="h-full flex flex-col">
       <div className="text-center mb-6">
-        <div className="inline-flex w-16 h-16 bg-gradient-to-br from-pink-400 to-purple-400 rounded-full items-center justify-center mb-4">
+        <div className="inline-flex w-16 h-16 bg-linear-to-br from-pink-400 to-purple-400 rounded-full items-center justify-center mb-4">
           <Calendar className="w-8 h-8 text-white" />
         </div>
-        {/* FIXED: Added 'text-gray-900' */}
+        
         <h2 className="text-2xl mb-2 font-bold text-gray-900">Cycle Information</h2>
         <p className="text-gray-600 text-sm">Help us personalize your experience</p>
       </div>
@@ -20,7 +20,6 @@ export function CycleInfoStep({ data, update }) {
             value={data.lastPeriodDate} 
             onChange={(e) => update('lastPeriodDate', e.target.value)}
             max={new Date().toISOString().split('T')[0]}
-            // FIXED: Added 'text-gray-900' to input
             className="w-full px-4 py-3 rounded-xl border border-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all"
           />
         </div>
