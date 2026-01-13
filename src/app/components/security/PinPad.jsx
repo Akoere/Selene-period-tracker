@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Delete, X } from 'lucide-react';
 import { useSecurity } from '../../context/SecurityContext';
 
-export function PinPad({ onClose, isSettingUp = false, onPinSet }) {
+export function PinPad({ onClose, isSettingUp = false, onPinSet, onSuccess }) {
     const { verifyPin } = useSecurity();
     const [pin, setPin] = useState('');
     const [error, setError] = useState(false);
@@ -39,6 +39,7 @@ export function PinPad({ onClose, isSettingUp = false, onPinSet }) {
             const isValid = verifyPin(input);
             if (isValid) {
                 // Success handled by context (unlocks app)
+                if (onSuccess) onSuccess();
             } else {
                 setError(true);
                 setTimeout(() => {

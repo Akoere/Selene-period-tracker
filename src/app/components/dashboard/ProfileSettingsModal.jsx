@@ -16,6 +16,7 @@ export function ProfileSettingsModal({ isOpen, onClose, activeTab, initialData, 
     } = useSecurity();
 
     const [showPinSetup, setShowPinSetup] = useState(false); // Local state for overlay
+    const [pinFlow, setPinFlow] = useState('idle'); // idle, verify_old, setup_new
 
     // Form State
     const [fullName, setFullName] = useState('');
@@ -246,22 +247,33 @@ export function ProfileSettingsModal({ isOpen, onClose, activeTab, initialData, 
                                         <p className="text-sm opacity-60" style={{ color: 'var(--foreground)' }}>Secure with PIN Code</p>
                                     </div>
                                 </div>
-                                <button
-                                    onClick={() => {
-                                        if (isPinEnabled) {
-                                            if (confirm("Disable App Lock?")) disablePin();
-                                        } else {
-                                            setShowPinSetup(true);
-                                        }
-                                    }}
-                                    className={`relative w-14 h-8 rounded-full transition-colors duration-300 ${
-                                        isPinEnabled ? 'bg-pink-500' : 'bg-gray-200 dark:bg-gray-700'
-                                    }`}
-                                >
-                                    <div className={`absolute top-1 left-1 w-6 h-6 rounded-full bg-white shadow-sm transition-transform duration-300 ${
-                                        isPinEnabled ? 'translate-x-6' : 'translate-x-0'
-                                    }`} />
-                                </button>
+                                <div className="flex items-center gap-3">
+                                    {isPinEnabled && (
+                                        <button 
+                                            onClick={() => setPinFlow('verify_old')}
+                                            className="text-sm font-medium px-3 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+                                            style={{ color: primaryColor }}
+                                        >
+                                            Change PIN
+                                        </button>
+                                    )}
+                                    <button
+                                        onClick={() => {
+                                            if (isPinEnabled) {
+                                                if (confirm("Disable App Lock?")) disablePin();
+                                            } else {
+                                                setShowPinSetup(true);
+                                            }
+                                        }}
+                                        className={`relative w-14 h-8 rounded-full transition-colors duration-300 ${
+                                            isPinEnabled ? 'bg-pink-500' : 'bg-gray-200 dark:bg-gray-700'
+                                        }`}
+                                    >
+                                        <div className={`absolute top-1 left-1 w-6 h-6 rounded-full bg-white shadow-sm transition-transform duration-300 ${
+                                            isPinEnabled ? 'translate-x-6' : 'translate-x-0'
+                                        }`} />
+                                    </button>
+                                </div>
                             </div>
 
                             {/* Privacy Mode Toggle */}
@@ -290,22 +302,49 @@ export function ProfileSettingsModal({ isOpen, onClose, activeTab, initialData, 
                                 </button>
                             </div>
 
-                {showPinSetup && (
+                {(showPinSetup || pinFlow !== 'idle') && (
                     <div 
                         className="absolute inset-0 z-50 flex flex-col"
                         style={{ backgroundColor: 'var(--card-bg)' }}
                     >
                         <div className="p-4">
-                            <button onClick={() => setShowPinSetup(false)} className="text-sm">Cancel</button>
+                            <button onClick={() => { setShowPinSetup(false); setPinFlow('idle'); }} className="text-sm opacity-70 hover:opacity-100">Cancel</button>
                         </div>
                         <div className="flex-1 flex items-center justify-center">
-                            <PinPad 
-                                isSettingUp={true} 
-                                onPinSet={(pin) => {
-                                    setAppPin(pin);
-                                    setShowPinSetup(false);
-                                }} 
-                            />
+                            {showPinSetup && (
+                                <PinPad 
+                                    isSettingUp={true} 
+                                    onPinSet={(pin) => {
+                                        setAppPin(pin);
+                                        setShowPinSetup(false);
+                                    }} 
+                                />
+                            )}
+                            
+                            {pinFlow === 'verify_old' && (
+                                <div className="text-center w-full">
+                                    <h3 className="text-sm font-bold mb-4 opacity-50 uppercase tracking-widest">Verify Old PIN</h3>
+                                    <PinPad 
+                                        isSettingUp={false} 
+                                        onSuccess={() => setPinFlow('setup_new')}
+                                    />
+                                </div>
+                            )}
+
+                            {pinFlow === 'setup_new' && (
+                                <div className="text-center w-full">
+                                    {/* <h3 className="text-sm font-bold mb-4 opacity-50 uppercase tracking-widest">Set New PIN</h3> */} 
+                                    {/* PinPad handles "Create PIN" title already */}
+                                    <PinPad 
+                                        isSettingUp={true} 
+                                        onPinSet={(pin) => {
+                                            setAppPin(pin);
+                                            setPinFlow('idle'); 
+                                            alert("PIN updated successfully!");
+                                        }} 
+                                    />
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}

@@ -33,6 +33,12 @@ export default defineConfig({
             type: 'image/png'
           }
         ]
+      },
+      devOptions: {
+        enabled: true,
+        suppressWarnings: true,
+        navigateFallback: 'index.html',
+        type: 'module',
       }
     })
   ],

@@ -33,9 +33,18 @@ export default function App() {
 
       if (session) {
         const { data: profile } = await getProfile(session.user.id);
-        // Fix: Check if profile has cycle data OR explicit onboarding flag
-        if (profile && profile.is_onboarded) {
+        
+        // Check LocalStorage Backup
+        const localOnboarded = localStorage.getItem(`selene_onboarded_${session.user.id}`);
+
+        // Fix: Check if profile has cycle data OR explicit onboarding flag OR LocalStorage backup
+        if ((profile && profile.is_onboarded) || localOnboarded === 'true') {
           setOnboardingComplete(true);
+          
+          // Sync LocalStorage if missing but profile says yes
+          if (!localOnboarded && profile?.is_onboarded) {
+             localStorage.setItem(`selene_onboarded_${session.user.id}`, 'true');
+          }
         }
       }
       setLoading(false);

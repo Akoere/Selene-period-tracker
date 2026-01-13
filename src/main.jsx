@@ -2,16 +2,20 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './app/App';
 import './styles/index.css';
+import { registerSW } from 'virtual:pwa-register';
 
-// Force unregister any existing service workers to fix cache issues
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then(function(registrations) {
-    for(let registration of registrations) {
-      registration.unregister();
-      console.log('Service Worker unregistered to clear cache');
+// Register the Service Worker to enable PWA capabilities (Install, Offline, etc.)
+const updateSW = registerSW({
+  onNeedRefresh() {
+    // Optional: Prompt user to reload when a new version is available
+    if (confirm('New content available. Reload?')) {
+      updateSW(true);
     }
-  });
-}
+  },
+  onOfflineReady() {
+    console.log('App is ready to work offline');
+  },
+});
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

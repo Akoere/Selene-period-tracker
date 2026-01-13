@@ -37,6 +37,9 @@ export function AppLayout({ children }) {
 
       {/* Mobile Bottom Nav */}
       <BottomNav />
+
+      {/* PWA Install Prompt */}
+      <PWAPrompt />
       
     </div>
   );

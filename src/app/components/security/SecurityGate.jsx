@@ -1,6 +1,7 @@
 import { PinPad } from './PinPad';
 import { useSecurity } from '../../context/SecurityContext';
 import { useTheme } from '../../context/ThemeContext';
+import logoImage from '@/assets/selene-logo.png';
 
 export function SecurityGate({ children }) {
   const { isLocked, isPinEnabled } = useSecurity();
@@ -19,9 +20,9 @@ export function SecurityGate({ children }) {
         {/* Absolutely ZERO glow or effects as requested */}
         {isPinEnabled ? (
             <div className="w-full">
-                <div className="text-center mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-gray-900 text-white flex items-center justify-center mx-auto mb-4 font-bold text-xl">
-                        S
+                <div className="text-center mb-8">
+                    <div className="w-20 h-20 flex items-center justify-center mx-auto mb-4 p-4">
+                        <img src={logoImage} alt="Selene Logo" className="w-full h-full object-contain" />
                     </div>
                 </div>
                 <PinPad />

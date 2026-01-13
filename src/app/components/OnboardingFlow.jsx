@@ -41,6 +41,9 @@ export function OnboardingFlow({ onComplete }) {
         period_length: parseInt(formData.periodLength),
         is_onboarded: true // MARK AS COMPLETE
       });
+      
+      // Save to LocalStorage for immediate persistence
+      localStorage.setItem(`selene_onboarded_${user.id}`, 'true');
 
       // 2. Log the "Last Period" if provided
       if (formData.lastPeriodDate) {
